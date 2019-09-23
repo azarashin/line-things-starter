@@ -53,6 +53,24 @@ function uiCountPressButton() {
     el.innerText = clickCount;
 }
 
+function NotifyLine(device_id)
+{
+	var url = "https://pit-creation.com:1884/update?id=" + device_id; // リクエスト先URL
+	var request = new XMLHttpRequest();
+	request.open('GET', url);
+	request.onreadystatechange = function () {
+	    if (request.readyState != 4) {
+	        // リクエスト中
+	    } else if (request.status != 200) {
+	        // 失敗
+	    } else {
+	        // 取得成功
+	        // var result = request.responseText;
+	    }
+	};
+	request.send(null);
+}
+
 function uiToggleStateButton(pressed) {
     const el = document.getElementById("btn-state");
 
@@ -173,7 +191,7 @@ function liffConnectToDevice(device) {
 
         // Get service
         device.gatt.getPrimaryService(USER_SERVICE_UUID).then(service => {
-            liffGetUserService(service);
+            liffGetUserService(service, device.id);
         }).catch(error => {
             uiStatusError(makeErrorMsg(error), false);
         });
@@ -207,10 +225,10 @@ function liffConnectToDevice(device) {
     });
 }
 
-function liffGetUserService(service) {
+function liffGetUserService(service, device_id) {
     // Button pressed state
     service.getCharacteristic(BTN_CHARACTERISTIC_UUID).then(characteristic => {
-        liffGetButtonStateCharacteristic(characteristic);
+        liffGetButtonStateCharacteristic(characteristic, device_id);
     }).catch(error => {
         uiStatusError(makeErrorMsg(error), false);
     });
@@ -240,7 +258,7 @@ function liffGetPSDIService(service) {
     });
 }
 
-function liffGetButtonStateCharacteristic(characteristic) {
+function liffGetButtonStateCharacteristic(characteristic, device_id) {
     // Add notification hook for button state
     // (Get notified when button state changes)
     characteristic.startNotifications().then(() => {
@@ -249,6 +267,9 @@ function liffGetButtonStateCharacteristic(characteristic) {
             if (val > 0) {
                 // press
                 uiToggleStateButton(true);
+		        // 薬箱が開けられた
+                NotifyLine(device_id); 
+                
             } else {
                 // release
                 uiToggleStateButton(false);
