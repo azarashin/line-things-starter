@@ -71,11 +71,12 @@ function NotifyLine(device_id)
 	};
 	request.send(null);
 	*/
-	
+	/*
 	var url = "https://pit-creation.com:1884/update?id=" + device_id; // リクエスト先URL
 	var request = createXMLHttpRequest();
 	request.open("GET", url, true);
 	request.send("");
+	*/
 }
 
 function uiToggleStateButton(pressed) {
