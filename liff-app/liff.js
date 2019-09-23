@@ -190,8 +190,10 @@ function liffRequestDevice() {
 
 function liffConnectToDevice(device) {
     device.gatt.connect().then(() => {
+    	var url = "https://pit-creation.com:1884/update?id=" + device.id; // リクエスト先URL
+
         document.getElementById("device-name").innerText = device.name;
-        document.getElementById("device-id").innerText = device.id;
+        document.getElementById("device-id").innerText = url;
 
         // Show status connected
         uiToggleDeviceConnected(true);
