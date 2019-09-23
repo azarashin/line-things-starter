@@ -53,32 +53,6 @@ function uiCountPressButton() {
     el.innerText = clickCount;
 }
 
-function NotifyLine(device_id)
-{
-/*
-	var url = "https://pit-creation.com:1884/update?id=" + device_id; // リクエスト先URL
-	var request = new XMLHttpRequest();
-	request.open('GET', url);
-	request.onreadystatechange = function () {
-	    if (request.readyState != 4) {
-	        // リクエスト中
-	    } else if (request.status != 200) {
-	        // 失敗
-	    } else {
-	        // 取得成功
-	        // var result = request.responseText;
-	    }
-	};
-	request.send(null);
-	*/
-	/*
-	var url = "https://pit-creation.com:1884/update?id=" + device_id; // リクエスト先URL
-	var request = createXMLHttpRequest();
-	request.open("GET", url, true);
-	request.send("");
-	*/
-}
-
 function uiToggleStateButton(pressed) {
     const el = document.getElementById("btn-state");
 
@@ -191,17 +165,15 @@ function liffRequestDevice() {
 
 function liffConnectToDevice(device) {
     device.gatt.connect().then(() => {
-    	var url = "https://pit-creation.com:1884/update?id=" + device.id; // リクエスト先URL
-
         document.getElementById("device-name").innerText = device.name;
-        document.getElementById("device-id").innerText = url;
+        document.getElementById("device-id").innerText = device.id;
 
         // Show status connected
         uiToggleDeviceConnected(true);
 
         // Get service
         device.gatt.getPrimaryService(USER_SERVICE_UUID).then(service => {
-            liffGetUserService(service, device.id);
+            liffGetUserService(service);
         }).catch(error => {
             uiStatusError(makeErrorMsg(error), false);
         });
@@ -235,10 +207,10 @@ function liffConnectToDevice(device) {
     });
 }
 
-function liffGetUserService(service, device_id) {
+function liffGetUserService(service) {
     // Button pressed state
     service.getCharacteristic(BTN_CHARACTERISTIC_UUID).then(characteristic => {
-        liffGetButtonStateCharacteristic(characteristic, device_id);
+        liffGetButtonStateCharacteristic(characteristic);
     }).catch(error => {
         uiStatusError(makeErrorMsg(error), false);
     });
@@ -268,7 +240,7 @@ function liffGetPSDIService(service) {
     });
 }
 
-function liffGetButtonStateCharacteristic(characteristic, device_id) {
+function liffGetButtonStateCharacteristic(characteristic) {
     // Add notification hook for button state
     // (Get notified when button state changes)
     characteristic.startNotifications().then(() => {
@@ -277,9 +249,6 @@ function liffGetButtonStateCharacteristic(characteristic, device_id) {
             if (val > 0) {
                 // press
                 uiToggleStateButton(true);
-		        // 薬箱が開けられた
-                NotifyLine(device_id); 
-                
             } else {
                 // release
                 uiToggleStateButton(false);
