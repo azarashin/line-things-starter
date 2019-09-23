@@ -55,6 +55,7 @@ function uiCountPressButton() {
 
 function NotifyLine(device_id)
 {
+/*
 	var url = "https://pit-creation.com:1884/update?id=" + device_id; // リクエスト先URL
 	var request = new XMLHttpRequest();
 	request.open('GET', url);
@@ -69,6 +70,7 @@ function NotifyLine(device_id)
 	    }
 	};
 	request.send(null);
+	*/
 }
 
 function uiToggleStateButton(pressed) {
