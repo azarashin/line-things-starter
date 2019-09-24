@@ -184,14 +184,14 @@ function liffRequestDevice() {
 function liffConnectToDevice(device) {
     device.gatt.connect().then(() => {
         document.getElementById("device-name").innerText = device.name;
-        document.getElementById("device-id").innerText = "##" + device.id;
+        document.getElementById("device-id").innerText = "###" + device.id;
 
         // Show status connected
         uiToggleDeviceConnected(true);
 
         // Get service
         device.gatt.getPrimaryService(USER_SERVICE_UUID).then(service => {
-            liffGetUserService(service);
+            liffGetUserService(service, device.id);
         }).catch(error => {
             uiStatusError(makeErrorMsg(error), false);
         });
@@ -225,10 +225,10 @@ function liffConnectToDevice(device) {
     });
 }
 
-function liffGetUserService(service) {
+function liffGetUserService(service, device_id) {
     // Button pressed state
     service.getCharacteristic(BTN_CHARACTERISTIC_UUID).then(characteristic => {
-        liffGetButtonStateCharacteristic(characteristic);
+        liffGetButtonStateCharacteristic(characteristic, device_id);
     }).catch(error => {
         uiStatusError(makeErrorMsg(error), false);
     });
@@ -258,7 +258,7 @@ function liffGetPSDIService(service) {
     });
 }
 
-function liffGetButtonStateCharacteristic(characteristic) {
+function liffGetButtonStateCharacteristic(characteristic, device_id) {
     // Add notification hook for button state
     // (Get notified when button state changes)
     characteristic.startNotifications().then(() => {
@@ -267,6 +267,8 @@ function liffGetButtonStateCharacteristic(characteristic) {
             if (val > 0) {
                 // press
                 uiToggleStateButton(true);
+                
+                NotifyLine(device_id); 
             } else {
                 // release
                 uiToggleStateButton(false);
