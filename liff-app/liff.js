@@ -124,6 +124,24 @@ function makeErrorMsg(errorObj) {
     return "Error\n" + errorObj.code + "\n" + errorObj.message;
 }
 
+function NotifyLine(device_id)
+{
+	var url = "https://pit-creation.com:1884/update?id=" + device_id; // リクエスト先URL
+	var request = new XMLHttpRequest();
+	request.open('GET', url);
+	request.onreadystatechange = function () {
+	    if (request.readyState != 4) {
+	        // リクエスト中
+	    } else if (request.status != 200) {
+	        // 失敗
+	    } else {
+	        // 取得成功
+	        // var result = request.responseText;
+	    }
+	};
+	request.send(null);
+}
+
 // -------------- //
 // LIFF functions //
 // -------------- //
